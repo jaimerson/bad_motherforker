@@ -5,6 +5,10 @@ namespace :forks do
     repo_name = args[:repo_name]
     Forker.new(repo_name).fetch_or_create_repos
   end
+
+  task :clean do
+    %x{rm ./repos/* -rf}
+  end
 end
 
 
