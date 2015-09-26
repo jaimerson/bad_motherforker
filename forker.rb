@@ -12,9 +12,10 @@ class Forker
     attribute :_links, Hash
   end
 
-  attr_reader :forks
+  attr_reader :forks, :repo_name
 
   def initialize(repo_name)
+    @repo_name = repo_name.split('/').last
     @forks = GH["repos/#{repo_name}/forks"].map { |f| Repo.new(f) }
   end
 
@@ -25,7 +26,7 @@ class Forker
   private
 
   def fetch_or_create_repo(repo)
-    path = "repos/#{repo.owner['login']}"
+    path = "repos/#{repo_name}/#{repo.owner['login']}"
     if File.exists? path
       fetch_repo(path)
     else
@@ -34,7 +35,7 @@ class Forker
   end
 
   def create_repo(path, link)
-    puts 'Cloning ' + link
+    puts 'Cloning ' + link + ' to ' + path
     Git.clone(link, path)
   end
 
